@@ -1,0 +1,105 @@
+[gd_scene load_steps=12 format=3 uid="uid://dw6pu1gkydj71"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_ywbyo"]
+[ext_resource type="Script" path="res://scripts/player/weapons/swordv1.gd" id="2_0jig2"]
+[ext_resource type="Script" path="res://scenes/player/character_mover.gd" id="2_mgfap"]
+[ext_resource type="PackedScene" uid="uid://n5tlyg267p5y" path="res://assets/models/swordv1.glb" id="3_a01ax"]
+[ext_resource type="PackedScene" uid="uid://nhis05810uth" path="res://assets/models/handsv1.glb" id="4_8isxa"]
+[ext_resource type="Script" path="res://scenes/player/audioPlayer.gd" id="5_8m8gn"]
+[ext_resource type="AudioStream" uid="uid://dmuxmwsuac4ah" path="res://assets/audio/sfx/dashEffect.wav" id="6_f8qs3"]
+[ext_resource type="AudioStream" uid="uid://ctg287yi3r8cs" path="res://assets/audio/sfx/swordEffect.wav" id="8_e6p2x"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_axbik"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7oefa"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_y18q2"]
+
+[node name="player" type="CharacterBody3D"]
+collision_mask = 2
+script = ExtResource("1_ywbyo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_axbik")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_7oefa")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("SphereMesh_y18q2")
+
+[node name="Camera" type="Camera3D" parent="Head"]
+transform = Transform3D(1, 0, -2.13163e-14, 0, 1, 0, 2.13163e-14, 0, 1, 0, 0, 0)
+
+[node name="Label" type="Label" parent="Head/Camera"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="UI 2" type="Label" parent="Head/Camera"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 23.0
+grow_horizontal = 0
+size_flags_horizontal = 0
+
+[node name="weaponManager" type="Node3D" parent="Head/Camera"]
+visible = false
+
+[node name="swordManager" type="Node3D" parent="Head/Camera/weaponManager"]
+transform = Transform3D(1, 0, 1.86347e-20, 0, 1, 0, -1.86347e-20, 0, 1, 0, 0, 0)
+script = ExtResource("2_0jig2")
+
+[node name="graphics" type="Node3D" parent="Head/Camera/weaponManager/swordManager"]
+
+[node name="sword" parent="Head/Camera/weaponManager/swordManager/graphics" instance=ExtResource("3_a01ax")]
+transform = Transform3D(0.0174497, 0.0302239, 0.999391, -0.866025, 0.5, 0, -0.499695, -0.865498, 0.0348995, 0.820308, -0.789, -0.717899)
+
+[node name="handManager" type="Node3D" parent="Head/Camera"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+
+[node name="handsv1" parent="Head/Camera/handManager" instance=ExtResource("4_8isxa")]
+
+[node name="Skeleton3D" parent="Head/Camera/handManager/handsv1/armsrig" index="0"]
+bones/1/rotation = Quaternion(-0.499908, 0.500092, 0.499908, 0.500092)
+bones/1/scale = Vector3(1, 1, 1)
+bones/2/rotation = Quaternion(0.00262153, 2.22644e-09, 4.97101e-10, 0.999997)
+bones/2/scale = Vector3(1, 1, 1)
+bones/3/rotation = Quaternion(-0.257147, 1.00236e-08, -1.02209e-07, 0.966372)
+bones/4/rotation = Quaternion(-2.2851e-07, 2.43707e-08, 0.707107, 0.707107)
+bones/4/scale = Vector3(1, 1, 1)
+bones/5/rotation = Quaternion(0.683836, -0.683836, -0.179912, -0.179912)
+bones/6/rotation = Quaternion(-0.499908, -0.500092, -0.499908, 0.500092)
+bones/6/scale = Vector3(1, 1, 1)
+bones/7/rotation = Quaternion(0.00262153, -2.22644e-09, -4.97101e-10, 0.999997)
+bones/7/scale = Vector3(1, 1, 1)
+bones/8/rotation = Quaternion(-0.257147, -1.00236e-08, 1.02209e-07, 0.966372)
+bones/9/rotation = Quaternion(-2.2851e-07, -2.43707e-08, -0.707107, 0.707107)
+bones/9/scale = Vector3(1, 1, 1)
+
+[node name="arm" parent="Head/Camera/handManager/handsv1/armsrig/Skeleton3D" index="0"]
+transform = Transform3D(0.650001, -1.71793e-07, 1.78814e-07, 1.49012e-07, -1.04075e-07, -0.650001, 2.08647e-07, 0.650001, -5.66143e-08, -1.95201, -0.0374881, -0.224069)
+
+[node name="AnimationPlayer" parent="Head/Camera/handManager/handsv1" index="1"]
+autoplay = "idle"
+
+[node name="charactermover" type="Node3D" parent="."]
+script = ExtResource("2_mgfap")
+
+[node name="audio manager" type="Node3D" parent="."]
+script = ExtResource("5_8m8gn")
+
+[node name="dashFx" type="AudioStreamPlayer" parent="audio manager"]
+stream = ExtResource("6_f8qs3")
+volume_db = -5.622
+
+[node name="swordFx" type="AudioStreamPlayer" parent="audio manager"]
+stream = ExtResource("8_e6p2x")
+
+[connection signal="animation_finished" from="Head/Camera/handManager/handsv1/AnimationPlayer" to="Head/Camera/weaponManager/swordManager" method="_on_animation_player_animation_finished"]
+
+[editable path="Head/Camera/handManager/handsv1"]
