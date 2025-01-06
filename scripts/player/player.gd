@@ -5,7 +5,6 @@ extends CharacterBody3D
 
 @export var mouse_sensitivity_h = .13
 @export var mouse_sensitivity_v = .13
-@onready var hitbox = $CollisionShape3D
 
 
 @onready var hand_marker = $HandMarker
@@ -38,7 +37,6 @@ var is_hooked = false
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	label1.text = "Action Pressed: "
-	hitbox.disabled = false
 	
 func _input(event):
 	if dead:
@@ -121,10 +119,6 @@ func _physics_process(delta):
 			
 	if is_hooked:
 		character_mover.move_to_hook()
-	
-	if Input.is_action_just_pressed("slam"):
-		character_mover.slamDown()
-		sword_manager.downSpin()
 
 
 
