@@ -603,6 +603,8 @@ _data = {
 [node name="player" type="CharacterBody3D"]
 collision_mask = 2
 script = ExtResource("1_ywbyo")
+mouse_sensitivity_h = null
+mouse_sensitivity_v = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -666,7 +668,7 @@ bones/8/rotation = Quaternion(-0.23439, 0.776502, 0.0320406, 0.58402)
 bones/9/rotation = Quaternion(-2.2851e-07, -2.43707e-08, -0.707107, 0.707107)
 
 [node name="arm" parent="Head/Camera/handManager/handsv1/armsrig/Skeleton3D" index="0"]
-transform = Transform3D(0.259251, -0.0375692, 0.594877, 0.58306, 0.150736, -0.244582, -0.123816, 0.631164, 0.093821, -0.689997, -1.06127, 0.225878)
+transform = Transform3D(0.259251, -0.0375693, 0.594877, 0.58306, 0.150736, -0.244582, -0.123816, 0.631164, 0.0938208, -0.689997, -1.06127, 0.225878)
 
 [node name="arm" parent="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm" index="0"]
 transform = Transform3D(0.766044, 0, -0.642787, 0, 1, 0, 0.642787, 0, 0.766044, 0, 0, 0)
@@ -678,7 +680,6 @@ libraries = {
 autoplay = "idle"
 
 [node name="charactermover" type="Node3D" parent="."]
-visible = false
 script = ExtResource("2_mgfap")
 
 [node name="audio_manager" type="Node3D" parent="."]

@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends Node3D
 
 @onready var camera = $Head/Camera
 @onready var character_mover = $charactermover
@@ -19,8 +19,11 @@ var dead = false
 var previous_action = ""
 
 var m2_drawTime = 0.0
-var m2_maxDraw = 1.0 
+var m2_maxDraw = 0.35
 var is_m2_held = false
+var canUpperCut = true
+@onready var upper_cut_timer = $upperCutTimer
+
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -33,14 +36,14 @@ func _input(event):
 		rotation_degrees.y -= event.relative.x * mouse_sensitivity_h
 		camera.rotation_degrees.x -= event.relative.y * mouse_sensitivity_v
 		camera.rotation_degrees.x = clamp(camera.rotation_degrees.x, -78, 90)
-	
+
 func _physics_process(delta):
 	if dead:
 		return
-	
+
 	if previous_action != "":
 		label1.text = "Action Pressed: " + previous_action
-	
+
 	if Input.is_action_just_pressed("quit"):
 		get_tree().quit()
 		previous_action = "Quit"
@@ -61,7 +64,7 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forwards", "move_backwards")
 	var move_dir = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	character_mover.set_move_dir(move_dir)
-	
+
 	if Input.is_action_just_pressed("jump"):
 		character_mover.jump()
 		previous_action = "Jump"
@@ -69,27 +72,39 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("hit"):
 		sword_manager.slash()
 		previous_action = "Heavy Slash"
-		if m2_drawTime >= m2_maxDraw:
-			sword_manager.swordSpin()
-		
-		
+
 	if Input.is_action_pressed("draw sword"):
 		if !is_m2_held:
 			is_m2_held = true
 			m2_drawTime = 0.0
+			sword_manager.play_drawspin()  # Start draw animation
 		m2_drawTime += delta
-		
-		sword_manager.drawSword()
-		
-		if m2_drawTime >= m2_maxDraw && !maxDrawReached:
-			print("Max Draw")
-			sword_manager.maxDraw()
+		if m2_drawTime >= m2_maxDraw and !maxDrawReached:
 			maxDrawReached = true
+			sword_manager.play_maxdraw()  # Play looping max draw animation
 	elif Input.is_action_just_released("draw sword"):
-		
-		if m2_drawTime < m2_maxDraw:
-			sword_manager.stopDrawSword()  
+		if maxDrawReached:
+			sword_manager.play_spinrelease()  # Play spin release animation
 		else:
-			sword_manager.swordSpin()
-		is_m2_held = false
-		maxDrawReached = false
+			sword_manager.reverse_drawspin()  # Reverse drawspin to idle
+		reset_draw_state()
+
+	if Input.is_action_just_pressed("uppercut") && canUpperCut:
+		canUpperCut = false
+		character_mover.uppercut()
+		sword_manager.uppercut()
+		upper_cut_timer.start()
+
+
+func reset_draw_state():
+	is_m2_held = false
+	maxDrawReached = false
+
+
+func _on_sword_manager_spin_released():
+	character_mover.launch_forward()
+
+
+func _on_upper_cut_timer_timeout():
+	canUpperCut = true
+	print("I can uppercut again")

@@ -11,11 +11,13 @@ var canChain = false
 var inputQueued = false
 @onready var label = $"../../UI 2"
 
-var animation_speed = 1.0  # Default speed (1.0 is normal speed)
+var animation_speed = 1.0  # Default speed (1.0 is normal speed)\
+signal spinReleased
+
 
 func _ready():
 	# Set the default speed for all animations
-	set_animation_speed(1.3)
+	set_animation_speed(1.5)
 
 # Function to adjust animation speed
 func set_animation_speed(speed: float):
@@ -47,16 +49,49 @@ func slash():
 				swordAnim.play("heavySwingRight")
 				audio_manager.slash()
 
-func swordSpin():
-	pass
+func play_drawspin():
+	current_animation = "drawSpin"
+	swordAnim.play("drawSpin",-1,0.4, false)
+
+
+# Play the max draw looping animation
+func play_maxdraw():
+	current_animation = "maxDraw"
+	swordAnim.play("maxDraw")
+	audio_manager.maxDrawReached()
+
+# Reverse the draw animation to idle
+func reverse_drawspin():
+	# Play the drawspin animation in reverse to transition back to idle
+	current_animation = "idle"
+	swordAnim.play_backwards("drawSpin")
+
+
+# Play the spin release animation
+func play_spinrelease():
+	current_animation = "spinRelease"
+	swordAnim.play("spinRelease",-1,1.0,false)
+	emit_signal("spinReleased")
+	
+func reset_sword_state():
+	current_animation = "idle"
+	canSwing = true
+	canChain = false
+	inputQueued = false
+
+func uppercut():
+	current_animation = "spinRelease"
+	swordAnim.play("spinRelease")
+
 
 func _physics_process(delta):
 	label.text = "current_animation: " + str(current_animation) + "\nInputQueued: " + str(inputQueued) + "\ncanChain: " + str(canChain)
 
 # Handle animation finishing logic in this function
 func _on_animation_player_animation_finished(anim_name):
-	
-	
+	if anim_name == "spinRelease":
+		reset_sword_state()
+		swordAnim.play("idle")
 	if anim_name == "heavySwingRight" or anim_name == "swingLeft" or anim_name == "transition":
 		canSwing = true  # Allow the next swing after animation finishes
 		
@@ -93,7 +128,4 @@ func _on_animation_player_animation_finished(anim_name):
 				canChain = true
 				inputQueued = false  # Reset inputQueued after continuing the chain
 			else:
-				current_animation = "idle"
-				swordAnim.play("idle")
-				canChain = false  # Reset canChain
-				inputQueued = false  # Reset inputQueued
+				reset_sword_state()

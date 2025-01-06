@@ -3,7 +3,7 @@ extends Node3D
 @onready var dash_fx = $dashFx
 @onready var sword_fx = $swordFx
 @onready var draw_sword = $drawSword
-
+@onready var max_draw = $maxDraw
 
 func _ready():
 	pass 

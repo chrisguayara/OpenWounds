@@ -680,6 +680,11 @@ autoplay = "idle"
 [node name="charactermover" type="Node3D" parent="."]
 visible = false
 script = ExtResource("2_mgfap")
+jump_force = null
+gravity = null
+max_speed = null
+move_accel = null
+stop_drag = null
 
 [node name="audio_manager" type="Node3D" parent="."]
 script = ExtResource("5_8m8gn")
