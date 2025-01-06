@@ -6,6 +6,8 @@ extends Node3D
 @onready var max_draw = $maxDraw
 @onready var launch_fx = $launchFx
 @onready var uppercut_fx = $uppercutFX
+@onready var slam_fx = $slamFx
+
 
 func _ready():
 	pass 
@@ -27,5 +29,9 @@ func uppercut():
 	uppercut_fx.play()
 	launch_fx.volume_db = -10.0
 	launch_fx.play()
+
+func slam():
+	slam_fx.play()
+
 func _process(delta):
 	pass

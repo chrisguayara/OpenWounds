@@ -17,4 +17,3 @@ func _draw():
 func _process(delta):
 	# Update the crosshair position if needed (centered on the screen)
 	crosshair_position = get_viewport().size / 2
-	update()  # Call to redraw the crosshair

@@ -4,6 +4,9 @@ var AreaDamage: int = 34
 @onready var audio_manager = $"../../../../audio_manager"
 
 @onready var swordAnim = $"../../handManager/handsv1/AnimationPlayer"
+@onready var handsv_1 = $"../../handManager/handsv1"
+@onready var swordCollider = $"../../handManager/handsv1/armsrig/Skeleton3D/arm/Area3D/collider"
+
 
 var current_animation = "idle"
 var canSwing = true
@@ -16,8 +19,9 @@ signal spinReleased
 
 
 func _ready():
-	# Set the default speed for all animations
 	set_animation_speed(1.5)
+	swordCollider.disabled =true
+
 
 # Function to adjust animation speed
 func set_animation_speed(speed: float):
@@ -74,6 +78,7 @@ func play_spinrelease():
 	
 func reset_sword_state():
 	current_animation = "idle"
+	swordAnim.play("idle")
 	canSwing = true
 	canChain = false
 	inputQueued = false
@@ -83,12 +88,22 @@ func uppercut():
 	swordAnim.play("spinRelease")
 	audio_manager.uppercut()
 
+func slamDown():
+	current_animation = "transitionSlam"
+	swordAnim.play("transitionSlam",-1,2,false)
+	audio_manager.uppercut()
+	swordCollider.disabled = false
+	
+
 
 func _physics_process(delta):
 	label.text = "current_animation: " + str(current_animation) + "\nInputQueued: " + str(inputQueued) + "\ncanChain: " + str(canChain)
 
 
 func _on_animation_player_animation_finished(anim_name):
+	if anim_name == "transitionSlam":
+		current_animation = "slamSpin"
+		swordAnim.play("slamSpin")
 	if anim_name == "spinRelease":
 		reset_sword_state()
 		swordAnim.play("idle")
@@ -125,3 +140,6 @@ func _on_animation_player_animation_finished(anim_name):
 				inputQueued = false  
 			else:
 				reset_sword_state()
+
+
+

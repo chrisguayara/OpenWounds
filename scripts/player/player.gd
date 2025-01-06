@@ -119,6 +119,9 @@ func _physics_process(delta):
 			
 	if is_hooked:
 		character_mover.move_to_hook()
+	if Input.is_action_just_pressed("slam"):
+		character_mover.slam()
+		sword_manager.slamDown()
 
 
 
