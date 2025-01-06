@@ -1,4 +1,4 @@
-extends Node3D
+extends CharacterBody3D
 
 @onready var camera = $Head/Camera
 @onready var character_mover = $charactermover
@@ -6,7 +6,7 @@ extends Node3D
 @export var mouse_sensitivity_h = .13
 @export var mouse_sensitivity_v = .13
 
-@onready var interact_ray = $Head/Camera/InteractRay
+
 @onready var hand_marker = $HandMarker
 @onready var sword_manager = $Head/Camera/weaponManager/swordManager
 @onready var label1 = $"Head/Camera/UI 2"
@@ -23,6 +23,15 @@ var m2_maxDraw = 0.35
 var is_m2_held = false
 var canUpperCut = true
 @onready var upper_cut_timer = $upperCutTimer
+
+#hooking System
+@export var hook_reach = 30.0
+var can_hook = true
+@onready var hooking_timer = $hookingTimer
+@onready var hook_target = null
+var is_hooked = false
+@onready var hook_cast = $Head/Camera/hookCast
+
 
 
 func _ready():
@@ -94,6 +103,23 @@ func _physics_process(delta):
 		character_mover.uppercut()
 		sword_manager.uppercut()
 		upper_cut_timer.start()
+		
+	#hooking logic starts here
+	
+	if Input.is_action_just_pressed("hook") && can_hook:
+		if hook_cast.is_colliding():
+			print("Collider hit: ")
+			var collider = hook_cast.get_collider()  # Get the collider the ray hit
+			if collider and collider.has_method("on_hooked"):  # Check if the collider is hookable
+				print("HOOOKEDDD")
+				collider.on_hooked()  # Trigger the hookable object's response
+				character_mover.start_hook(hook_cast.get_collision_point())
+				can_hook = false
+				hooking_timer.start()
+			
+	if is_hooked:
+		character_mover.move_to_hook()
+
 
 
 func reset_draw_state():
@@ -108,3 +134,7 @@ func _on_sword_manager_spin_released():
 func _on_upper_cut_timer_timeout():
 	canUpperCut = true
 	print("I can uppercut again")
+
+
+func _on_hooking_timer_timeout():
+	can_hook = true

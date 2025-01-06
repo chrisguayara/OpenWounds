@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dw6pu1gkydj71"]
+[gd_scene load_steps=27 format=3 uid="uid://dw6pu1gkydj71"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_ywbyo"]
 [ext_resource type="Script" path="res://scripts/player/weapons/swordv1.gd" id="2_0jig2"]
@@ -11,7 +11,6 @@
 [ext_resource type="AudioStream" uid="uid://ctg287yi3r8cs" path="res://assets/audio/sfx/swordEffect.wav" id="8_e6p2x"]
 [ext_resource type="AudioStream" uid="uid://bor35fdgm51w1" path="res://assets/audio/sfx/swordDraw - click .wav" id="9_b3f1x"]
 [ext_resource type="AudioStream" uid="uid://esg0pjm82pkb" path="res://assets/audio/sfx/uppercutFx.wav" id="11_p0afc"]
-[ext_resource type="Script" path="res://scenes/player/crosshair.gd" id="12_3x55e"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_axbik"]
 
@@ -685,7 +684,7 @@ transform = Transform3D(1, 0, -2.13163e-14, 0, 1, 0, 2.13163e-14, 0, 1, 0, 0, 0)
 fov = 77.0
 
 [node name="hookCast" type="RayCast3D" parent="Head/Camera"]
-target_position = Vector3(0, -1.13, -30)
+target_position = Vector3(0, 0, -30)
 collision_mask = 4
 collide_with_areas = true
 
@@ -749,6 +748,11 @@ autoplay = "idle"
 [node name="charactermover" type="Node3D" parent="."]
 visible = false
 script = ExtResource("2_mgfap")
+jump_force = null
+gravity = null
+max_speed = null
+move_accel = null
+stop_drag = null
 
 [node name="audio_manager" type="Node3D" parent="."]
 script = ExtResource("5_8m8gn")
@@ -773,9 +777,6 @@ wait_time = 3.0
 
 [node name="hookingTimer" type="Timer" parent="."]
 wait_time = 2.0
-
-[node name="crosshair" type="Node3D" parent="."]
-script = ExtResource("12_3x55e")
 
 [connection signal="spinReleased" from="Head/Camera/weaponManager/swordManager" to="." method="_on_sword_manager_spin_released"]
 [connection signal="animation_finished" from="Head/Camera/handManager/handsv1/AnimationPlayer" to="Head/Camera/weaponManager/swordManager" method="_on_animation_player_animation_finished"]

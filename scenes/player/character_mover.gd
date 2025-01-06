@@ -29,6 +29,12 @@ var dashCooldownTime: float = 2.0
 
 var current_speed: float = 0.0
 
+var isHooking = false
+var hook_target : Vector3
+var hook_speed = 100
+var hook_momentum = 0.0
+
+
 
 func _ready():
 	character_body = get_parent() 
@@ -47,6 +53,15 @@ func launch_forward():
 		audio_manager.launch() 
 		print("spin!!!")
 		dashMeter = 2.0
+var hasThrusted = false
+func thrust():
+	if !hasThrusted:
+		hasThrusted = true
+		var forward_dir = -character_body.transform.basis.z.normalized()
+		character_body.velocity += forward_dir * launch_force
+		launch_momentum = forward_dir * launch_force 
+		audio_manager.launch() 
+		print("thrust!!!")
 
 func jump():
 	if character_body.is_on_floor():
@@ -105,4 +120,29 @@ func _physics_process(delta):
 		dash_momentum = Vector3.ZERO
 		uppercut_momentum = Vector3.ZERO
 	character_body.move_and_slide()
+	
+	#hookLogic
+	if isHooking:
+		move_to_hook(delta)
+	
 	label.text = "Speed: %.2f\n" % character_body.velocity.length() + "\nIs Dashing: " + str(isDashing) + "\nDash Meter: %.2f" % dashMeter + "\nDash Time: %.2f" % dashTime + "\nDash Duration: %.2f" % dashDuration + "\nMove Dir: " + str(move_dir)
+
+func start_hook(target: Vector3):
+	hook_target = target
+	isHooking = true
+	
+
+func move_to_hook(delta):
+	var direction = (hook_target - character_body.global_position).normalized()
+	var distance = (hook_target - character_body.global_position).length()
+
+	# Apply a force towards the hook target
+	if distance > 1.0:  # Stop if close enough
+		character_body.velocity = direction * hook_speed
+		if !hasThrusted:
+			thrust() 
+	else:
+		character_body.velocity = direction * max_speed
+		character_body.apply_floor_snap()
+		isHooking = false
+		hasThrusted = false
