@@ -60,14 +60,13 @@ func play_maxdraw():
 	swordAnim.play("maxDraw")
 	audio_manager.maxDrawReached()
 
-# Reverse the draw animation to idle
+
 func reverse_drawspin():
-	# Play the drawspin animation in reverse to transition back to idle
 	current_animation = "idle"
 	swordAnim.play_backwards("drawSpin")
 
 
-# Play the spin release animation
+
 func play_spinrelease():
 	current_animation = "spinRelease"
 	swordAnim.play("spinRelease",-1,1.0,false)
@@ -82,30 +81,29 @@ func reset_sword_state():
 func uppercut():
 	current_animation = "spinRelease"
 	swordAnim.play("spinRelease")
+	audio_manager.uppercut()
 
 
 func _physics_process(delta):
 	label.text = "current_animation: " + str(current_animation) + "\nInputQueued: " + str(inputQueued) + "\ncanChain: " + str(canChain)
 
-# Handle animation finishing logic in this function
+
 func _on_animation_player_animation_finished(anim_name):
 	if anim_name == "spinRelease":
 		reset_sword_state()
 		swordAnim.play("idle")
 	if anim_name == "heavySwingRight" or anim_name == "swingLeft" or anim_name == "transition":
-		canSwing = true  # Allow the next swing after animation finishes
+		canSwing = true 
 		
 		if anim_name == "heavySwingRight":
-			# If no input was queued, transition to idle
 			if !inputQueued:
-				print("YO!!!!")
+				print("input cancelled")
 				current_animation = "idle"
-				swordAnim.play("idle")
+				swordAnim.play_backwards("heavySwingRightRev")
 				canSwing = true
 				canChain = false
 				inputQueued = false
 			else:
-				# If input was queued, continue chaining the animation
 				current_animation = "swingLeft"
 				swordAnim.play("swingLeft")
 				audio_manager.slash()
@@ -113,19 +111,17 @@ func _on_animation_player_animation_finished(anim_name):
 				canChain = true
 
 		elif anim_name == "swingLeft":
-			# Transition to next animation (e.g., transition)
 			current_animation = "transition"
 			swordAnim.play("transition")
-			canSwing = false  # Disable swinging while transitioning
+			canSwing = false 
 
 		elif anim_name == "transition":
-			# After transition, check if inputQueued is true to chain back to heavySwingRight
 			if inputQueued:
 				current_animation = "heavySwingRight"
 				swordAnim.play("heavySwingRight")
 				audio_manager.slash()
 				canSwing = false
 				canChain = true
-				inputQueued = false  # Reset inputQueued after continuing the chain
+				inputQueued = false  
 			else:
 				reset_sword_state()

@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bo7trwmw8bgh7"]
+
+[ext_resource type="Texture2D" uid="uid://daj3btf6qcy7p" path="res://assets/materials and textures/dirt_10-128x128.png" id="1_ni5bt"]
+
+[resource]
+shading_mode = 0
+albedo_texture = ExtResource("1_ni5bt")
+uv2_triplanar = true
+uv2_world_triplanar = true
+texture_filter = 2
