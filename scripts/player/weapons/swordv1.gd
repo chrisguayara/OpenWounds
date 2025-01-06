@@ -14,10 +14,13 @@ var inputQueued = false
 var animation_speed = 1.0  # Default speed (1.0 is normal speed)\
 signal spinReleased
 
+@onready var collisionshape3d = $"../../handManager/handsv1/armsrig/Skeleton3D/arm/collisions/CollisionShape3D"
+
 
 func _ready():
 	# Set the default speed for all animations
 	set_animation_speed(1.5)
+	collisionshape3d.disabled = true
 
 # Function to adjust animation speed
 func set_animation_speed(speed: float):
@@ -35,6 +38,7 @@ func slash():
 			swordAnim.play("heavySwingRight")
 			audio_manager.slash()
 			canSwing = false
+			collisionshape3d.disabled = false
 			canChain = true
 		elif canChain and inputQueued:
 			if current_animation == "heavySwingRight":
@@ -71,18 +75,25 @@ func play_spinrelease():
 	current_animation = "spinRelease"
 	swordAnim.play("spinRelease",-1,1.0,false)
 	emit_signal("spinReleased")
+	reset_sword_state()
 	
 func reset_sword_state():
 	current_animation = "idle"
 	canSwing = true
 	canChain = false
 	inputQueued = false
+	collisionshape3d.disabled = true
 
 func uppercut():
 	current_animation = "spinRelease"
 	swordAnim.play("spinRelease")
 	audio_manager.uppercut()
 
+func downSpin():
+	current_animation = "downspin"
+	swordAnim.play("downspin")
+	audio_manager.uppercut()
+	reset_sword_state()
 
 func _physics_process(delta):
 	label.text = "current_animation: " + str(current_animation) + "\nInputQueued: " + str(inputQueued) + "\ncanChain: " + str(canChain)
@@ -92,6 +103,7 @@ func _on_animation_player_animation_finished(anim_name):
 	if anim_name == "spinRelease":
 		reset_sword_state()
 		swordAnim.play("idle")
+		collisionshape3d.disabled = true
 	if anim_name == "heavySwingRight" or anim_name == "swingLeft" or anim_name == "transition":
 		canSwing = true 
 		

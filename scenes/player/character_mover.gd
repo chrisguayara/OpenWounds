@@ -11,16 +11,15 @@ var character_body : CharacterBody3D
 var move_drag = 0.0
 var move_dir: Vector3
 var isLaunching = true
-var launch_force = 750.0
+var launch_force = 300.0
 
 var uppercut_force = 25
-var uppercut_momentum = Vector3.ZERO
-var dash_momentum = Vector3.ZERO 
-var launch_momentum = Vector3.ZERO
+var momentum = Vector3.ZERO
+
 
 var isDashing: bool = false
 var dashMeter: float = 2.0
-var dashForce: float = 4.1
+var dashForce: float = 3.1
 var dashTime: float = 0.0
 var dashDuration: float = 0.2  
 var dashCooldownTime: float = 2.0
@@ -34,7 +33,9 @@ var hook_target : Vector3
 var hook_speed = 100
 var hook_momentum = 0.0
 
-
+var slam_force = -75
+var isSlammed: bool = false
+@onready var slamEffect = $"../particle"
 
 func _ready():
 	character_body = get_parent() 
@@ -49,7 +50,7 @@ func launch_forward():
 		isLaunching = true
 		var forward_dir = -character_body.transform.basis.z.normalized()
 		character_body.velocity += forward_dir * launch_force
-		launch_momentum = forward_dir * launch_force 
+		momentum += forward_dir * launch_force 
 		audio_manager.launch() 
 		print("spin!!!")
 		dashMeter = 2.0
@@ -59,7 +60,8 @@ func thrust():
 		hasThrusted = true
 		var forward_dir = -character_body.transform.basis.z.normalized()
 		character_body.velocity += forward_dir * launch_force
-		launch_momentum = forward_dir * launch_force 
+		var thrustforce = launch_force/2
+		momentum += forward_dir * thrustforce
 		audio_manager.launch() 
 		print("thrust!!!")
 
@@ -68,7 +70,7 @@ func jump():
 		character_body.velocity.y = jump_force 
 func uppercut():
 	character_body.velocity.y = uppercut_force
-	uppercut_momentum = Vector3(0, uppercut_force, 0)
+	momentum = Vector3(0, uppercut_force, 0)
 
 
 func dash():
@@ -76,9 +78,14 @@ func dash():
 		dashMeter += -1.0
 		isDashing = true
 		dashTime = dashDuration
-		dash_momentum = move_dir * dashForce 
+		momentum += move_dir * dashForce 
 		audio_manager.dash()
 
+func slamDown():
+	if !character_body.is_on_floor():
+		character_body.velocity.y = slam_force
+		isSlammed = true
+		print("Slam initiated: Mid-air!")
 
 func _physics_process(delta):
 	if character_body.velocity.y > 0.0 and character_body.is_on_ceiling():
@@ -116,14 +123,21 @@ func _physics_process(delta):
 		flat_velo.y = 0.0  
 		character_body.velocity += move_accel * move_dir - flat_velo * drag
 		
-		launch_momentum = Vector3.ZERO
-		dash_momentum = Vector3.ZERO
-		uppercut_momentum = Vector3.ZERO
+		momentum = Vector3.ZERO
+		momentum = Vector3.ZERO
+		momentum = Vector3.ZERO
 	character_body.move_and_slide()
 	
 	#hookLogic
 	if isHooking:
 		move_to_hook(delta)
+	
+	if isSlammed && character_body.is_on_floor():
+		print("SLAMMMMM")
+		audio_manager.drop()
+		slamEffect.emitting = true
+		isSlammed = false
+		momentum = Vector3.ZERO
 	
 	label.text = "Speed: %.2f\n" % character_body.velocity.length() + "\nIs Dashing: " + str(isDashing) + "\nDash Meter: %.2f" % dashMeter + "\nDash Time: %.2f" % dashTime + "\nDash Duration: %.2f" % dashDuration + "\nMove Dir: " + str(move_dir)
 

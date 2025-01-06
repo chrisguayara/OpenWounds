@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b7wnwv318gm5b"]
+[gd_scene load_steps=13 format=3 uid="uid://b7wnwv318gm5b"]
 
 [ext_resource type="PackedScene" uid="uid://dw6pu1gkydj71" path="res://scenes/player/player.tscn" id="1_g2koj"]
 [ext_resource type="Material" uid="uid://bo7trwmw8bgh7" path="res://assets/materials and textures/dirtExample.tres" id="1_qujwl"]
@@ -20,12 +20,19 @@ glow_enabled = true
 [sub_resource type="BoxMesh" id="BoxMesh_h5104"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0nm6i"]
+render_priority = -1
 shading_mode = 0
 specular_mode = 2
 albedo_color = Color(0.685728, 0.24907, 0.23823, 1)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1u7e1"]
-radius = 2.995
+radius = 0.9
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u2707"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qbo8y"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_20iwd"]
 
 [node name="PracticeRange" type="Node3D"]
 
@@ -53,7 +60,8 @@ material = ExtResource("1_qujwl")
 [node name="player" parent="." instance=ExtResource("1_g2koj")]
 
 [node name="hookabletest" type="Area3D" parent="."]
-collision_layer = 4
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 15)
+collision_layer = 6
 collision_mask = 5
 script = ExtResource("3_bpebj")
 
@@ -65,6 +73,17 @@ surface_material_override/0 = SubResource("StandardMaterial3D_0nm6i")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="hookabletest"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("SphereShape3D_1u7e1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 0)
+collision_layer = 4
+physics_material_override = SubResource("PhysicsMaterial_u2707")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("CapsuleMesh_qbo8y")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CapsuleShape3D_20iwd")
 
 [connection signal="area_entered" from="hookabletest" to="player" method="_on_hookabletest_area_entered"]
 [connection signal="area_entered" from="hookabletest" to="hookabletest" method="_on_area_entered"]
