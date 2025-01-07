@@ -7,6 +7,7 @@ extends Node3D
 @onready var launch_fx = $launchFx
 @onready var uppercut_fx = $uppercutFX
 @onready var slam_fx = $slamFx
+@onready var normal_hit = $normalHit
 
 
 func _ready():
@@ -33,5 +34,5 @@ func uppercut():
 func slam():
 	slam_fx.play()
 
-func _process(delta):
-	pass
+func normalHit():
+	normal_hit.play()

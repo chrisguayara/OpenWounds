@@ -11,7 +11,7 @@ var character_body : CharacterBody3D
 var move_drag = 0.0
 var move_dir: Vector3
 var isLaunching = true
-var launch_force = 750.0
+var launch_force = 300.0
 
 var uppercut_force = 25
 var momentum = Vector3.ZERO

@@ -1,11 +1,12 @@
-[gd_scene load_steps=34 format=3 uid="uid://dw6pu1gkydj71"]
+[gd_scene load_steps=33 format=3 uid="uid://dw6pu1gkydj71"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_ywbyo"]
 [ext_resource type="Script" path="res://scripts/player/weapons/swordv1.gd" id="2_0jig2"]
 [ext_resource type="Script" path="res://scenes/player/character_mover.gd" id="2_mgfap"]
+[ext_resource type="PackedScene" uid="uid://n5tlyg267p5y" path="res://assets/models/swordv1.glb" id="3_a01ax"]
+[ext_resource type="PackedScene" uid="uid://dvhdo12btimsb" path="res://scenes/player/weapons/swordSlashes.tscn" id="3_va70y"]
 [ext_resource type="PackedScene" uid="uid://nhis05810uth" path="res://assets/models/handsv1.glb" id="4_8isxa"]
 [ext_resource type="Script" path="res://scenes/player/audioPlayer.gd" id="5_8m8gn"]
-[ext_resource type="Script" path="res://scenes/player/weapons/melee.gd" id="5_l5qxv"]
 [ext_resource type="Animation" uid="uid://g5megtqb7xe6" path="res://assets/models/anims/transitionSlam.res" id="5_w5jlj"]
 [ext_resource type="Animation" uid="uid://c8pnh8hd50hi0" path="res://assets/models/anims/slamSpin.res" id="6_122j2"]
 [ext_resource type="AudioStream" uid="uid://dmuxmwsuac4ah" path="res://assets/audio/sfx/dashEffect.wav" id="6_f8qs3"]
@@ -14,7 +15,6 @@
 [ext_resource type="AudioStream" uid="uid://bor35fdgm51w1" path="res://assets/audio/sfx/swordDraw - click .wav" id="9_b3f1x"]
 [ext_resource type="AudioStream" uid="uid://esg0pjm82pkb" path="res://assets/audio/sfx/uppercutFx.wav" id="11_p0afc"]
 [ext_resource type="AudioStream" uid="uid://c3i0s86bfn36e" path="res://assets/audio/sfx/dropDownFx.wav" id="12_lr3ar"]
-[ext_resource type="AudioStream" uid="uid://bbnn6i8p5i46n" path="res://assets/audio/sfx/normalHit.wav" id="16_jrt3c"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_axbik"]
 
@@ -26,9 +26,6 @@ albedo_color = Color(0.576471, 0.584314, 0, 0)
 
 [sub_resource type="SphereMesh" id="SphereMesh_y18q2"]
 material = SubResource("StandardMaterial3D_m5pd2")
-
-[sub_resource type="BoxMesh" id="BoxMesh_mo2am"]
-size = Vector3(0.25, 0.25, 0.25)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_b3ueo"]
 size = Vector3(1, 3.42061, 1)
@@ -703,10 +700,6 @@ fov = 77.0
 [node name="Marker3D" type="Marker3D" parent="Head/Camera"]
 transform = Transform3D(1, -7.45058e-09, 7.4506e-09, -7.45058e-09, 1, 1.95578e-08, -2.13163e-14, 3.81842e-08, 1, -4.26326e-14, 0, -2)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Head/Camera/Marker3D"]
-visible = false
-mesh = SubResource("BoxMesh_mo2am")
-
 [node name="hookCast" type="RayCast3D" parent="Head/Camera"]
 target_position = Vector3(0, -1.13, -30)
 collision_mask = 4
@@ -726,12 +719,17 @@ grow_horizontal = 0
 size_flags_horizontal = 0
 
 [node name="weaponManager" type="Node3D" parent="Head/Camera"]
+visible = false
 
 [node name="swordManager" type="Node3D" parent="Head/Camera/weaponManager"]
 transform = Transform3D(1, 0, 1.86347e-20, 0, 1, 0, -1.86347e-20, 0, 1, 0, 0, 0)
 script = ExtResource("2_0jig2")
+slashesScene = ExtResource("3_va70y")
 
 [node name="graphics" type="Node3D" parent="Head/Camera/weaponManager/swordManager"]
+
+[node name="sword" parent="Head/Camera/weaponManager/swordManager/graphics" instance=ExtResource("3_a01ax")]
+transform = Transform3D(0.0174497, 0.0302239, 0.999391, -0.866025, 0.5, 0, -0.499695, -0.865498, 0.0348995, 0.820308, -0.789, -0.717899)
 
 [node name="handManager" type="Node3D" parent="Head/Camera"]
 
@@ -762,7 +760,6 @@ transform = Transform3D(0.766044, 0, -0.642787, 0, 1, 0, 0.642787, 0, 0.766044, 
 [node name="Area3D" type="Area3D" parent="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm" index="1"]
 collision_layer = 8
 collision_mask = 32
-script = ExtResource("5_l5qxv")
 
 [node name="collider" type="CollisionShape3D" parent="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm/Area3D"]
 transform = Transform3D(1, 2.11527e-07, 0, -7.0082e-07, 1, 0, 6.85453e-06, -6.01867e-07, 1, 2.98023e-07, 1.74615, -2.38419e-07)
@@ -775,6 +772,7 @@ libraries = {
 autoplay = "idle"
 
 [node name="charactermover" type="Node3D" parent="."]
+visible = false
 script = ExtResource("2_mgfap")
 
 [node name="audio_manager" type="Node3D" parent="."]
@@ -798,9 +796,6 @@ stream = ExtResource("11_p0afc")
 [node name="slamFx" type="AudioStreamPlayer" parent="audio_manager"]
 stream = ExtResource("12_lr3ar")
 
-[node name="normalHit" type="AudioStreamPlayer" parent="audio_manager"]
-stream = ExtResource("16_jrt3c")
-
 [node name="upperCutTimer" type="Timer" parent="."]
 wait_time = 3.0
 one_shot = true
@@ -809,8 +804,6 @@ one_shot = true
 wait_time = 2.0
 
 [connection signal="spinReleased" from="Head/Camera/weaponManager/swordManager" to="." method="_on_sword_manager_spin_released"]
-[connection signal="area_entered" from="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm/Area3D" to="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm/Area3D" method="_on_area_entered"]
-[connection signal="body_entered" from="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm/Area3D" to="Head/Camera/handManager/handsv1/armsrig/Skeleton3D/arm/Area3D" method="_on_body_entered"]
 [connection signal="animation_finished" from="Head/Camera/handManager/handsv1/AnimationPlayer" to="Head/Camera/weaponManager/swordManager" method="_on_animation_player_animation_finished"]
 [connection signal="timeout" from="upperCutTimer" to="." method="_on_upper_cut_timer_timeout"]
 [connection signal="timeout" from="hookingTimer" to="." method="_on_hooking_timer_timeout"]

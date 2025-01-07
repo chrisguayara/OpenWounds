@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvhdo12btimsb"]
+
+[ext_resource type="Script" path="res://scripts/player/weapons/projectile.gd" id="1_2h2au"]
+[ext_resource type="PackedScene" uid="uid://dsjp05v5fiyuo" path="res://assets/models/swordProjectile.glb" id="2_kucki"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_q7s5j"]
+radius = 0.519739
+height = 1.41435
+
+[node name="slashesScene" type="CharacterBody3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+script = ExtResource("1_2h2au")
+
+[node name="swordProjectile" parent="." instance=ExtResource("2_kucki")]
+transform = Transform3D(1.19209e-07, 0, -1, 0, 1, 0, 1, 0, 1.19209e-07, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_q7s5j")

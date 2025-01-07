@@ -80,13 +80,14 @@ func _physics_process(delta):
 		
 	if Input.is_action_just_pressed("hit"):
 		sword_manager.slash()
+		##sword_manager.spawn_projectile()
 		previous_action = "Heavy Slash"
 
 	if Input.is_action_pressed("draw sword"):
 		if !is_m2_held:
 			is_m2_held = true
 			m2_drawTime = 0.0
-			sword_manager.play_drawspin()  # Start draw animation
+			sword_manager.play_drawspin() 
 		m2_drawTime += delta
 		if m2_drawTime >= m2_maxDraw and !maxDrawReached:
 			maxDrawReached = true
@@ -141,3 +142,5 @@ func _on_upper_cut_timer_timeout():
 
 func _on_hooking_timer_timeout():
 	can_hook = true
+
+

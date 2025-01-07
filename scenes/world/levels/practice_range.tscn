@@ -53,8 +53,8 @@ material = ExtResource("1_qujwl")
 [node name="player" parent="." instance=ExtResource("1_g2koj")]
 
 [node name="hookabletest" type="Area3D" parent="."]
-collision_layer = 4
-collision_mask = 5
+collision_layer = 36
+collision_mask = 13
 script = ExtResource("3_bpebj")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="hookabletest"]
